@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Management| Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Purchase Icon -->
+
+  <style>
+    body {
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    .sidebar {
+      height: 100vh;
+      background: #212529;
+      color: white;
+      position: fixed;
+      width: 220px;
+      padding-top: 20px;
+    }
+
+    .sidebar h4 {
+      color: #ffc107;
+      font-weight: bold;
+    }
+
+    .sidebar a {
+      color: #adb5bd;
+      text-decoration: none;
+      padding: 15px 20px;
+      display: block;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: #495057;
+      color: #fff;
+    }
+
+    .main-content {
+      margin-left: 220px;
+      padding: 20px;
+    }
+
+    .header {
+      background: linear-gradient(to right, #0d6efd, #0b5ed7);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-box {
+      border-radius: 12px;
+      padding: 25px;
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+
+    .card-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .logout-btn {
+      position: absolute;
+      bottom: 20px;
+      width: 90%;
+      left: 5%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4 class="text-center mb-4"><i class="fa-solid fa-gears me-2"></i>Menu</h4>
+    <a class="active" href="/dashboard">
+      <i class="fa-solid fa-gauge me-2"></i>Home
+    </a>
+    
+    <a href="/customer_dashboard">
+      <i class="fa-solid fa-user-check me-2"></i>Customer Mgmt
+    </a>
+
+    <a href="/purchase_dashboard">
+      <i class="bi bi-cart-check me-2"></i>Purchase Request
+    </a>
+    
+    <a href="/quotation_dashboard">
+      <i class="fa-solid fa-file-invoice-dollar me-2"></i>Quotation
+    </a>
+    
+    <a href="/payment">
+      <i class="fa-solid fa-money-check-dollar me-2"></i>Payments
+    </a>
+    
+    <a href="/documents">
+      <i class="fa-solid fa-file-lines me-2"></i>Documents
+    </a>
+    
+    <a href="/govt-process">
+      <i class="fa-solid fa-landmark me-2"></i>Govt Process
+    </a>
+    
+    <a href="/reminders">
+      <i class="fa-solid fa-bell me-2"></i>Reminders
+    </a>
+    
+    <a href="/employee">
+      <i class="fa-solid fa-users me-2"></i>Employees
+    </a>
+    
+    <a href="/applicationtype_dashboard">
+      <i class="fa-solid fa-scale-balanced me-2""></i>License Details
+    </a>
+  
+    <form action="/logout" method="POST" class="logout-btn">
+      <button class="btn btn-danger w-100"><i class="fa-solid fa-sign-out-alt me-2"></i>Logout</button>
+    </form>
+  </div>
+  
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header mb-4">
+      <h2>Welcome to the User Management System</h2>
+      <p class="mb-0">Manage your business with confidence and clarity.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card-box text-center">
+          <h5>Total Employees</h5>
+          <p class="display-6 text-primary fw-bold">34</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-box text-center">
+          <h5>Pending Requests</h5>
+          <p class="display-6 text-warning fw-bold">5</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-box text-center">
+          <h5>Reports Generated</h5>
+          <p class="display-6 text-success fw-bold">12</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Bootstrap & FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

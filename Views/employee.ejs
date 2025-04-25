@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .dashboard-header {
+      background-color: #343a40;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .card-style {
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .table thead {
+      background-color: #343a40;
+      color: white;
+    }
+    #home{
+      position: absolute;
+      left: 0px;
+    }
+    #logout {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+    #adduserbtn{
+        position: relative;
+        right: 10vw;
+        top: 1.5vh;
+    }
+    @media (max-width: 768px) {
+      #logout {
+        position: static;
+        display: block;
+        width: 100%;
+        margin-top: 15px;
+      }
+      .dashboard-header h1 {
+        font-size: 1.8rem;
+      }
+      .dashboard-header p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container py-4">
+  <nav>
+    <div class="position-relative d-flex justify-content-between align-items-center">
+      <form action="/logout" method="POST">
+        <button class="btn btn-danger" id="logout">Log Out</button>
+      </form>
+      <a href="/main" class="btn btn-primary" id="home"> Back to Home </a>
+
+      <a href="/adduser" class="btn btn-success" id="adduserbtn">Add Employee</a>
+    </div>
+
+    <div class="dashboard-header text-center mt-3">
+      <h1>Employee List</h1>
+      <p class="lead mb-0">List of all Employees</p>
+    </div>
+
+    <div class="card card-style">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover text-center align-middle" id="employeeTable">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Created Date</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be dynamically populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- JS to fetch employee data -->
+<script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    // Define the API endpoint for fetching user details
+    const apiUrl = '/api/employee'; // Replace with the actual API URL
+
+    // Fetch user details from the API
+      
+    
+     const response = await fetch(apiUrl);
+      const data = await response.json();
+
+        const tableBody = document.querySelector('#employeeTable tbody');
+        if (data && data.length > 0) {
+          data.forEach((user, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${user.name}</td>
+              <td>${user.email}</td>
+              <td>${user.phone}</td>
+              <td>${new Date(user.created_at).toLocaleDateString()}</td>
+              <td>${user.role}</td>
+              <td>
+                  <div class="d-flex justify-content-center gap-2">
+                    <form action="/updateuser" method="GET">
+                  <button class="btn btn-sm btn-primary">Edit</button></form>
+                <form action="/deleteuser/${user.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="6">No users found.</td>';
+          tableBody.appendChild(row);
+        }
+      })
+</script>
+
+</body>
+</html>

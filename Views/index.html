@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Query Register</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container my-4">
+  <h2 class="mb-4 text-center">Customer Query Register</h2>
+
+  <!-- 1. Customer Information -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">Customer Information</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Customer Name</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Type of Work (Application Name)</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Date of Query</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Employee Allotted</label>
+        <input type="text" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Quotation Details -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">Quotation Details</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Date Sent</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Quotation Number</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Govt. Fees</label>
+        <input type="number" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Consultation Charges</label>
+        <input type="number" class="form-control">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Customer Response</label>
+        <select class="form-select">
+          <option selected disabled>Select</option>
+          <option>Accepted</option>
+          <option>Rejected</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Advance Payment -->
+  <div class="card mb-4">
+    <div class="card-header bg-warning text-dark">Advance Payment</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Advance Paid</label>
+        <input type="number" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Payment Mode</label>
+        <input type="text" class="form-control" placeholder="Cheque/NEFT/Cash">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Advance Received Date</label>
+        <input type="date" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Document Handling -->
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">Document Handling</div>
+    <div class="card-body row g-3">
+      <div class="col-md-12">
+        <label class="form-label">Documents Required</label>
+        <textarea class="form-control"></textarea>
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">Documents Sent by Customer</label>
+        <textarea class="form-control"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Government Portal Tracking -->
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">Govt. Portal Submission</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Application Submitted Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Query Raised Date</label>
+        <input type="date" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Query & Communication -->
+  <div class="card mb-4">
+    <div class="card-header bg-dark text-white">Query & Communication</div>
+    <div class="card-body row g-3">
+      <div class="col-md-12">
+        <label class="form-label">Query Details</label>
+        <textarea class="form-control"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Reply Submitted Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Resubmission Details</label>
+        <textarea class="form-control"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. License / Certificate -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">License / Certificate</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Docs Received from Govt</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Submitted to Customer</label>
+        <input type="date" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Final Payment -->
+  <div class="card mb-4">
+    <div class="card-header bg-danger text-white">Final Payment</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Balance Payment Received</label>
+        <input type="number" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Received Date</label>
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Final Payment Mode</label>
+        <input type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Transaction Closed Date</label>
+        <input type="date" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="text-center">
+    <button class="btn btn-primary">Submit Query</button>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
