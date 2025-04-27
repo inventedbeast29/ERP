@@ -57,12 +57,11 @@
 
           <!-- Type of Work Dropdown -->
           <div class="col-md-6">
-            <label for="workType" class="form-label">Type of Work</label>
-            <select class="form-select" id="workType" name="worktype" required>
-              <option value="" selected disabled>Select Work Type</option>
-              <option value="Installation">Installation</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Consultation">Consultation</option>
+            <label for="workType" class="form-label">Application Type</label>
+            <select class="form-select" id="workType" name="worktype" onchange="filterForms()" required>
+              <option value="" selected disabled>Select Application Type</option>
+           <%  apptype.forEach(at=>{ %>
+              <option value="<%=at.application_type%>"><%=at.application_type%></option> <%})%>
               <!-- Add more work types dynamically if needed -->
             </select>
           </div>
@@ -71,12 +70,15 @@
 
         <div class="row-mb-3">
           <div class="col-lg-3">
-          <label for="workType" class="form-label">Sub-Work</label>
+          <label for="workType" class="form-label">Choose Form </label>
           <select class="form-select" id="subwork" name="subwork" required>
-            <option value="" selected disabled>Sub-Work Type</option>
-            <option value="Installation">Installation</option>
-            <option value="Maintenance">Maintenance</option>
-            <option value="Consultation">Consultation</option>
+            <option value="" selected disabled>Choose Form Details</option>
+  <% formname.forEach(fname => { %>
+    <option value="<%= fname.form_name %>" 
+            <%= fname.form_name === worktype ? 'selected' : '' %>> 
+      <%= fname.form_name %>
+    </option>
+    <% }) %>
             <!-- Add more work types dynamically if needed -->
           </select>
         </div>
@@ -123,5 +125,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function filterForms(){
+const worktype=document.getElementById("workType").value;
+window.location.href = `/purchase_query?worktype=${encodeURIComponent(workType)}`;
+  }
+</script>
 </body>
 </html>

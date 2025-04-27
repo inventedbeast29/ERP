@@ -89,11 +89,13 @@ console.log("Message sent to",email);
 main()
 
     //Sending role information to login page and rendering
-    const query2="Select role from users";
+    const query2="Select distinct role from users";
     db.query(query2,(err,urole)=>{
       if(err){
         console.log(err)
+        return res.status(500)
       }
+      console.log(urole)
       res.render("login",{urole})
       })
    
@@ -103,7 +105,7 @@ main()
 
 
 app.get("/login",(req,res)=>{
-  const query="select role from users";
+  const query="select distinct role from users";
   db.query(query,[],(err,urole)=>{
     if(err){
       console.log("error",err)
@@ -355,8 +357,16 @@ app.post("/customers_del/:id",(req,res)=>{
 
 
 app.get("/purchase_query",authenticateRoutes,(req,res)=>{
+  let {worktype}=req.query;
   const query1="Select * from customers";
   const query2="select * from users";
+  const query3="select distinct application_type from license_type"
+  let query4="select distinct form_name from license_type";
+  let params=[];
+  if(worktype){
+    query4+=" Where application_type=?"
+    params.push(worktype)
+  }
   db.query(query1,(err,customer)=>{
     if(err){
       return res.send("Error",err)
@@ -366,11 +376,20 @@ app.get("/purchase_query",authenticateRoutes,(req,res)=>{
     if(err){
       console.log(err);
     }
-    res.render("purchase_details",{customer,employee})
-  })
-})})
+    db.query(query3,(err,apptype)=>{
+      if(err){
+        console.log(err);
+      }
 
-//Error |
+      db.query(query4,params,(err,formname)=>{
+        if(err){
+          console.log("Form name",err)
+        }
+        console.log(formname);
+    res.render("purchase_details",{customer,employee,apptype,formname,worktype})
+  })})})})
+})
+
 
 
 app.get("/purchase_dashboard",authenticateRoutes,(req,res)=>{
