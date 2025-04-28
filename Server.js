@@ -324,7 +324,7 @@ app.post("/add-customer",(req,res)=>{
       }
       if(result){
         
-        res.render("customer_dashboard")
+        res.redirect("/customer_dashboard")
       }
   })
 })
@@ -348,7 +348,7 @@ app.post("/customers_del/:id",(req,res)=>{
     if(err){console.log("Unable to delete customers",err)
       return res.send("Customer cannot be deleted");
     }
-    res.render("customer_dashboard")
+    res.redirect("/customer_dashboard")
   })
 })
 
@@ -357,16 +357,11 @@ app.post("/customers_del/:id",(req,res)=>{
 
 
 app.get("/purchase_query",authenticateRoutes,(req,res)=>{
-  let {worktype}=req.query;
+  
   const query1="Select * from customers";
   const query2="select * from users";
   const query3="select distinct application_type from license_type"
-  let query4="select distinct form_name from license_type";
-  let params=[];
-  if(worktype){
-    query4+=" Where application_type=?"
-    params.push(worktype)
-  }
+  const query4="select distinct form_name from license_type"
   db.query(query1,(err,customer)=>{
     if(err){
       return res.send("Error",err)
@@ -380,23 +375,39 @@ app.get("/purchase_query",authenticateRoutes,(req,res)=>{
       if(err){
         console.log(err);
       }
-
-      db.query(query4,params,(err,formname)=>{
-        if(err){
-          console.log("Form name",err)
-        }
-        console.log(formname);
-    res.render("purchase_details",{customer,employee,apptype,formname,worktype})
+      db.query(query4,(err,formname)=>{
+        if(err){console.log(err)}
+      
+    res.render("purchase_details",{customer,employee,apptype,formname})
   })})})})
 })
-
 
 
 app.get("/purchase_dashboard",authenticateRoutes,(req,res)=>{
   res.render("purchase_dashboard")})
 
+
 app.post("/purchase_query",(req,res)=>{
+  // I wanted to send to resposne so i can do that by comparing header value
+  const isAjax = req.headers['content-type'] === 'application/json';
+      
+  if(isAjax){
+  const {subworkvalue}=req.body
+  let query2="Select * from license_type where form_name=?";
+  db.query(query2,[subworkvalue],(err,result)=>{
+    if(err){console.log(err);}
+    if (result.length > 0) {
+    
+      res.json({ form_details: result[0]?.application_details });
+    } else {
+      res.json({ form_details: "No details found" });
+    }
+  });
+
+}
+      else{
 const {customername,worktype,subwork,querydate,assignedto,quotationno,quotationdate}=req.body;
+
   const query="Insert into purchase_query(customer_name,work_type,sub_work,query_date,assigned_to,quotation_no,quotation_sent)values(?,?,?,?,?,?,?)"
   db.query(query,[customername,worktype,subwork,querydate,assignedto,quotationno,quotationdate],(err,pquery)=>{
     if(err){
@@ -404,9 +415,10 @@ const {customername,worktype,subwork,querydate,assignedto,quotationno,quotationd
       return res.send("Unable to create purchase");
     }
   
-    res.render("purchase_dashboard")
-  })
-})
+    res.redirect("/purchase_dashboard")
+  })}})
+
+
 
 app.get("/api/purchase_dashboard",(req,res)=>{
   const query="Select * from purchase_query";
@@ -424,13 +436,10 @@ app.post("/purchase/delete/:id",(req,res)=>{
       console.log("Error deleting purchase query");
       return res.send("Unable to delete puchase query",err)
     }
-    res.render("purchase_dashboard")
+    res.redirect("/purchase_dashboard")
   })
 })
 
-app.get("/add_quotation",(req,res)=>{
-  res.render("add_quotation")
-})
 
 //Add License Type details
 app.get("/add_license",(req,res)=>{
@@ -460,6 +469,25 @@ app.get("/applicationtype_dashboard",(req,res)=>{
   res.render("applicationtype_dashboard")
 })
 
+
+app.get("/add_quotation",(req,res)=>{
+  const query="Select distinct name from customers"
+  db.query(query,(err,customers)=>{
+    if(err){
+      console.log(err)
+    }
+  const query1="Select distinct form_name from license_type";
+  db.query(query1,(err,form_name)=>{
+    if(err){console.log(err)}
+  
+  res.render("add_quotation",{customers,form_name})
+})
+})
+})
+
+app.get("/quotation_dashboard",(req,res)=>{
+  res.render("quotation_dashboard")
+});
 
 
 
