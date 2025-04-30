@@ -455,21 +455,14 @@ app.post("/license",(req,res)=>{
     res.render("applicationtype_dashboard")
   })
 })
-app.get("/api/applicationtype_dashboard",(req,res)=>{
-  const query="select * from license_type";
-  db.query(query,(err,result)=>{
-    if(err){
-      console.log("Error fetching license type")
-      return res.send("Error fetching license details")}  
-      res.json(result);
-    })
-})
+
 
 app.get("/applicationtype_dashboard",(req,res)=>{
   res.render("applicationtype_dashboard")
 })
 
-
+  //Quotation Module 
+  
 app.get("/add_quotation",(req,res)=>{
   const query="Select distinct name from customers"
   db.query(query,(err,customers)=>{
@@ -485,9 +478,46 @@ app.get("/add_quotation",(req,res)=>{
 })
 })
 
+
+app.post("/submit_quotation",(req,res)=>{
+  const {customerName,quotationDate,quotationNo,totalQty,grandTotal}=req.body
+  console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal);
+    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt)values(?,?,?,?,?) "
+
+    db.query(query,[customerName,quotationDate,quotationNo,totalQty,grandTotal],(err,result)=>{
+      if(err){
+        console.log("error inserting quotation details",err)
+      }
+      else{
+        console.log("Quotation added successfully")
+      }
+    })
+    res.redirect("/quotation_dashboard")
+})
+
+
+
 app.get("/quotation_dashboard",(req,res)=>{
-  res.render("quotation_dashboard")
-});
+  const query="select * from quotation";
+  db.query(query,(err,quotations)=>{
+    if(err){console.log(err)}
+  
+  res.render("quotation_dashboard",{quotations});
+})
+})
+
+app.post("/delete-quotation/:id",(req,res)=>{
+  const query="Delete from quotation where id=?"
+  const{id}=req.params
+  console.log(id);
+  db.query(query,[id],(err,result)=>{
+      if(err){
+        console.log("Error deleting quotaiton",err);
+        return res.send("Cannot delete quotation")
+      }
+      res.redirect("/quotation_dashboard")
+  })
+})
 
 
 

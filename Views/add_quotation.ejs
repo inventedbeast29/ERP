@@ -17,7 +17,7 @@
     </script>
 </head>
 <style>
-  .amount,#totalQty,#totalDiscamt,#totalTax,#grandAmt {
+  .amount,#totalQty,#totalDiscamt,#totalTax,#grandTotal {
     background-color: rgba(18, 19, 19, 0.071);
   }
 
@@ -50,13 +50,13 @@
         </div>
         
         <!-- Quotation Details Form -->
-        <form action="/submit-quotation" method="POST">
+        <form action="/submit_quotation" method="POST">
             
             <!-- Customer Details Row -->
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="customerName" class="form-label">Customer Name</label>
-                <select id="customerName" name="customerName" class="form-select select2" required>
+                <select id="customerName" name="customerName" class="form-select select2 " required>
                   <option value="">Select Customer</option>
                   <% customers.forEach(function(customer) { %>
                     <option value="<%= customer.name %>"><%= customer.name %></option>
@@ -102,15 +102,15 @@
                 </div>
                 <div class="col-md-2">
                     <label for="unitPrice" class="form-label">Unit Price</label>
-                    <input type="number"  id="unitPrice" name="unitPrice[]" class="form-control" required>
+                    <input type="number" step="0.01"  id="unitPrice" name="unitPrice[]" class="form-control" required>
                 </div>
                 <div class="col-md-2">
                     <label for="discount" class="form-label">Discount Amount</label>
-                    <input type="number"  id="discount" name="discount[]" class="form-control" value="0">
+                    <input type="number" step="0.01" id="discount" name="discount[]" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                     <label for="tax" class="form-label">Total Tax Amount</label>
-                    <input type="number" id="tax" name="tax[]" class="form-control" value="0">
+                    <input type="number" step="0.01" id="tax" name="tax[]" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                 <label class="form-label">Total Amount</label>
@@ -125,26 +125,26 @@
               <button type="button" class="btn btn-success" id="addItemBtn">+ Add Item</button>
           </div>
           <hr>
-          <div class="row mb-3">
-          
+        
+          <div class="row mb-3">          
               <p style="font-weight: bolder;font-size:25px">Grand Total</p>
              
             <div class="col-md-3">
-              <label for="tquantity" class="form-label" name="totalQty">Total Quantity</label>
-                <input type="number" class="form-control" id="totalQty" readonly>
+              <label for="tquantity" class="form-label" >Total Quantity</label>
+                <input type="number" class="form-control" name="totalQty" id="totalQty" readonly>
               
             </div>
             <div class="col-md-3">
-              <label for="discAmt" class="form-label" name="totalDiscamt">Total Discount</label>
-                <input type="number" class="form-control" id="totalDiscamt" readonly>
+              <label for="discAmt" class="form-label" >Total Discount</label>
+                <input type="number" class="form-control" name="totalDiscamt" id="totalDiscamt" readonly>
             </div>
             <div class="col-md-3">
-              <label for="tTax" class="form-label" name="totalTax">Total Tax Amount</label>
-              <input type="number" class="form-control" id="totalTax" readonly>
+              <label for="tTax" class="form-label" >Total Tax Amount</label>
+              <input type="number" class="form-control" name="totalTax" id="totalTax" readonly>
             </div>
             <div class="col-md-3">
-              <label for="grandtotal" class="form-label"  name="grandTotal">Grand Total Amount</label>
-                <input type="number" class="form-control" id="grandAmt" readonly>
+              <label for="grandtotal" class="form-label" >Grand Total Amount</label>
+                <input type="number" class="form-control" name="grandTotal" id="grandTotal" readonly>
             </div>
           </div>
           <hr>
@@ -179,6 +179,11 @@
     <script>
       const itemcontainer = document.getElementById("itemRowsContainer");
       const addItemBtn = document.getElementById("addItemBtn");
+      const totalQty=document.querySelector("#totalQty");
+    const totalDiscamt=document.querySelector("#totalDiscamt");
+    const totalTax=document.querySelector("#totalTax")
+    const grandTotal=document.querySelector("#grandTotal")
+
       let index=1;
    document.addEventListener("DOMContentLoaded", function () {
 
@@ -215,6 +220,9 @@ $(newRow).find("select.select2").select2();        // Init clone
 }
 }); })
 
+
+  
+
 document.addEventListener("input",function(e){
   if(e.target.name==="quantity[]"||
     e.target.name==="unitPrice[]"||
@@ -230,8 +238,39 @@ document.addEventListener("input",function(e){
 
         const amount=(quantity*unitPrice)-discount+tax;
         row.querySelector('[name="amount[]"]').value = amount.toFixed(2);
+
+
+        updateTotal()
+
   }
 })
+
+function updateTotal(){
+let tqty=0;
+  let tdisc=0;
+  let ttax=0;
+  let tamt=0;
+
+  document.querySelectorAll('[name="amount[]"]').forEach(function(amount) {
+    tamt += parseFloat(amount.value) || 0;
+  });
+  document.querySelectorAll('[name="quantity[]"]').forEach(function(qty) {
+    tqty += parseFloat(qty.value) || 0;
+  })
+  document.querySelectorAll('[name="discount[]"]').forEach(function(disc) {
+    tdisc += parseFloat(disc.value) || 0;
+  })
+  document.querySelectorAll('[name="tax[]"]').forEach(function(tax) {
+    ttax += parseFloat(tax.value) || 0;
+  })
+       totalQty.value=tqty;
+      totalDiscamt.value=tdisc
+      totalTax.value=ttax;
+      grandTotal.value=tamt;
+
+}
+
+
 
 document.addEventListener("DOMContentLoaded",function(){
   document.addEventListener("click",(e)=>{
