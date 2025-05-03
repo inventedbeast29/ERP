@@ -442,7 +442,7 @@ app.post("/purchase/delete/:id",(req,res)=>{
 
 
 //Add License Type details
-app.get("/add_license",(req,res)=>{
+app.get("/add_license",authenticateRoutes,(req,res)=>{
   res.render("add_license")
 })
 app.post("/license",(req,res)=>{
@@ -450,15 +450,37 @@ app.post("/license",(req,res)=>{
   const{application_type,form_name,application_details}=req.body
   db.query(query,[application_type,form_name,application_details],(err,result)=>{
     if(err){
-      console.log("Unable to insert into license table",err)
+      console.log("Unable to insert into license table",err);
+      return res.send("unable to add license")
     }
-    res.render("applicationtype_dashboard")
+    res.redirect("/applicationtype_dashboard")
   })
 })
 
 
-app.get("/applicationtype_dashboard",(req,res)=>{
-  res.render("applicationtype_dashboard")
+app.get("/applicationtype_dashboard",authenticateRoutes,(req,res)=>{
+  const query="select * from license_type"
+  db.query(query,(err,form)=>{
+    if(err){console.log(err)
+      return res.send("errro");
+    }
+  
+
+app.post("/license_delete/:id",(req,res)=>{
+  const {id}=req.params;
+  const query="Delete from license_type where id=?"
+  db.query(query,[id],(err,result)=>{
+    if(err){
+      return res.send("Unable to delete item",err)
+    }
+    res.redirect("/applicationtype_dashboard")
+  })
+})
+
+
+
+  res.render("applicationtype_dashboard",{form:form})
+  })
 })
 
   //Quotation Module 
@@ -497,7 +519,7 @@ app.post("/submit_quotation",(req,res)=>{
 
 
 
-app.get("/quotation_dashboard",(req,res)=>{
+app.get("/quotation_dashboard",authenticateRoutes,(req,res)=>{
   const query="select * from quotation";
   db.query(query,(err,quotations)=>{
     if(err){console.log(err)}

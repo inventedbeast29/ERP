@@ -3,13 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>Application Type List</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Bootstrap -->
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables Core -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Buttons -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+<!-- JSZip for Excel Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<!-- pdfmake for PDF Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+  
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4 text-center">List Of Application Type Details</h2>
+    <style>
+    #th{
+      width: 10vw;
+    }
+ #licensetype th{
+      text-align: center;
+    }
+    #licensetype th, 
+  #licensetype td {
+    border-right: 1px solid #dee2e6;
+  }
 
+  /* Remove border from last column to avoid double border */
+  #licensetype th:last-child, 
+  #licensetype td:last-child {
+    border-right: none;
+  }
+  /* Style the buttons container */
+#filterbutton {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+background-color: rgba(60, 60, 60, 0.263);
+}
+
+/* Style each button */
+#filterbutton .dt-button {
+  background-color: #007bff; /* Blue background */
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+  </style>
+  <span class="mb-3" id="filterbutton">
+
+  </span>
+  <div class="container mt-5">
+   
     <!-- Buttons outside the form -->
     <div class="d-flex justify-content-between mb-4">
       <a href="/main" class="btn btn-secondary">
@@ -23,51 +91,73 @@
     <!-- Displaying Submitted Applications -->
     <div class="card shadow-sm">
       <div class="card-header bg-dark text-white">
-        <h5 class="mb-0">List Of Application Type</h5>
+        <h5 class="mb-0 text-center">List Of Application Type</h5>
       </div>
       <div class="card-body p-2">
-        <table class="table table-bordered table-hover mb-0">
-          <thead class="table-light text-center">
+        <table class="table table-striped table-hover align-middle text-center border shadow-sm rounded" id="licensetype">
+          <thead class="table-dark">
             <tr>
               <th>S.No</th>
               <th>Application Type</th>
-              <th>Form Name</th>
+              <th id="th">Form Name</th>
               <th>Details of Application</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="applicationTableBody" class="text-center">
-            <!-- JS will populate rows here -->
+          <tbody id="applicationTableBody">
+            <% form.forEach((app, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= app.application_type %></td>
+                <td><%= app.form_name %></td>
+                <td><%= app.application_details %></td>
+                <td>
+                  <!-- Action Buttons -->
+                  <div class="d-flex justify-content-center gap-2">
+                    <!-- Update Button -->
+                    <a href="/update/<%= app.id %>" class="btn btn-sm btn-outline-primary">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <!-- Delete Button -->
+                    <form method="post" action="/license_delete/<%= app.id %>" onsubmit="return confirm('Are you sure you want to delete this?');" style="display:inline;">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
           </tbody>
         </table>
+          
       </div>
     </div>
   </div>
+<script>
 
-  <script>
-    const api = "/api/applicationtype_dashboard"; // Your API endpoint
+$(document).ready(function () {
+  var table = $('#licensetype').DataTable({
+    ordering: false,
+    dom: '<"top"f>rt<"bottom"p><"clear">',  // 'f' is the search box
+    buttons: [
+      'copy',
+      'csv',
+      'excel',
+      'pdf',
+      'print'
+    ],
+    initComplete: function () {
+      // Move the search box outside the table to the #filterbutton span
+      $('#licensetype_filter').appendTo('#filterbutton');
+    }
+  });
 
-    document.addEventListener("DOMContentLoaded", async function () {
-      try {
-        const response = await fetch(api); // Fetch data from the API
-        const result = await response.json(); // Parse the JSON response
-
-        const tbody = document.getElementById("applicationTableBody");
-
-        // Iterate over the result and populate the table rows dynamically
-        result.forEach((app, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${app.application_type}</td>
-            <td>${app.form_name}</td>
-            <td>${app.application_details}</td>
-          `;
-          tbody.appendChild(row); // Append the row to the table body
-        });
-      } catch (error) {
-        console.error("Error fetching application data:", error); // Handle errors if any
-      }
-    });
+  // Move the DataTable buttons outside the table into the #filterbutton span
+  table.buttons().container().appendTo('#filterbutton');
+});
+ 
   </script>
 </body>
 </html>
