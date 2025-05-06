@@ -14,6 +14,7 @@ app.use(cookieparser())
 const authenticateRoutes = require('./authenticateRoutes');
 const methodoverride=require('method-override');
 const { default: Swal } = require('sweetalert2');
+const { disconnect } = require('process');
 // Set EJS as view engine]
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // If needed
@@ -114,7 +115,7 @@ app.get("/login",(req,res)=>{
   })
 })
 
-app.post("/login", (req, res) => {
+app.post("/login",(req, res) => {
   const { email, password } = req.body;
   const query1 = "SELECT * FROM users WHERE email = ?";
   
@@ -502,20 +503,46 @@ app.get("/add_quotation",(req,res)=>{
 
 
 app.post("/submit_quotation",(req,res)=>{
-  const {customerName,quotationDate,quotationNo,totalQty,grandTotal}=req.body
-  console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal);
+  const {customerName,quotationDate,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
+  console.log(req.body)
+ //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
     const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt)values(?,?,?,?,?) "
-
+    const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
+   const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
+  // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
+    
     db.query(query,[customerName,quotationDate,quotationNo,totalQty,grandTotal],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
       else{
         console.log("Quotation added successfully")
-      }
-    })
-    res.redirect("/quotation_dashboard")
-})
+        const totalItems = item_desc.length;
+        let insertedCount = 0;
+         for (let i=0;i<totalItems;i++){
+          const desc=item_desc[i];
+          const qty=quantity[i];
+          const price=unitPrice[i];
+          const disc=discount[i];
+          const taxAmt=tax[i];
+          const amt=amount[i];
+          console.log(`Inserting Items ${i+1}`,{desc, qty, price, disc, taxAmt, amt })
+            db.query(query2,[quotationNo,desc,qty,price,disc,taxAmt,amt,paymentTerms,termsConditions,remarks],(err,result)=>{
+              if(err){
+                console.log("error",err);
+                return res.send("Error inserting items")
+              }
+              insertedCount++;
+
+              // Only redirect after all items are inserted
+              if (insertedCount === totalItems) {
+                res.redirect("/quotation_dashboard");
+              }
+            })
+         }
+               
+      }})
+        })
 
 
 
@@ -539,6 +566,11 @@ app.post("/delete-quotation/:id",(req,res)=>{
       }
       res.redirect("/quotation_dashboard")
   })
+})
+
+app.get("/view-quotation/:quotationNo",(req,res)=>{
+  const quotationNo=req.params;
+
 })
 
 

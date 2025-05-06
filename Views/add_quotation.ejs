@@ -89,7 +89,7 @@
                </div>
                 <div class="col-md-2">
                     <label for="itemDescription" class="form-label">Item Description</label>
-                    <select id="itemName" name="itemName[]" class="form-select select2" required>
+                    <select id="itemName" name="item_desc[]" class="form-select select2" required>
                       <option value="" >Select Form Name</option>
                       <% form_name.forEach(function(item) { %>
                         <option value="<%= item.form_name%>"><%= item.form_name %></option>
