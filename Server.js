@@ -573,6 +573,53 @@ app.get("/view-quotation/:quotationNo",(req,res)=>{
 
 })
 
+app.get("/reminders",(req,res)=>{
+  const query="Select * from customers";
+  const query2="Select * from quotation";
+  db.query(query,(err,result)=>{
+    if(err){
+      console.log(err)
+    }
+    db.query(query2,(err,quotation)=>{
+      if(err){console.log(err);
+        return res.send("Cannot get quotation")
+      }
+      res.render("reminder",{result,quotation})
+    })  
+  })
+})
+
+
+
+  app.post("/send_reminder",(req,res)=>{
+    const{customerName,customerEmail,quotationNo,reminderType,message}=req.body
+    console.log(customerName,customerEmail,quotationNo,reminderType,message);
+    let subject="";
+    if(reminderType==="quotation"){
+      subject=`Reminder: Quotation Acceptance for ${quotationNo}`
+    }
+    else{
+      subject=`Reminder:Payment Due for ${quotationNo}`
+    }
+
+   const mailOptions={
+        from: "SY Associates",
+        to: customerEmail,
+        subject: subject,
+        html:` Dear <b>${customerName}</b>,<br><br>${message}<br><br>Regards,<br>SY Associates`
+      }
+
+      transporter.sendMail(mailOptions,(err,result)=>{
+        if (err) {
+          console.log('Error sending email: ', err.toString);
+          return res.status(500).send('Error sending email');
+        }
+          console.log('Email sent: ' + result.response);
+          return res.redirect('/reminders');
+  })
+})
+
+  
 
 
 app.listen(4444,(err)=>{

@@ -57,7 +57,6 @@
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 8px;
-background-color: rgba(60, 60, 60, 0.263);
 }
 
 /* Style each button */
@@ -148,10 +147,6 @@ $(document).ready(function () {
       'pdf',
       'print'
     ],
-    initComplete: function () {
-      // Move the search box outside the table to the #filterbutton span
-      $('#licensetype_filter').appendTo('#filterbutton');
-    }
   });
 
   // Move the DataTable buttons outside the table into the #filterbutton span
