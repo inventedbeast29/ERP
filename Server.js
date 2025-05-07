@@ -595,8 +595,7 @@ app.get("/reminders",(req,res)=>{
           console.log('Error sending email: ', err.toString);
           return res.status(500).send('Error sending email');
         }
-          console.log('Email sent: ' + result.response);
-          return res.redirect('/reminders');
+          res.json({"status":"mailsent"})
   })
 })
 
