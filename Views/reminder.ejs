@@ -44,7 +44,7 @@
             </div>
               <div class="col-md-6">
                 <label for="customerEmail" class="form-label">Customer Email</label>
-                <select class="form-control select2" name="customerEmail" id="customerEmail" placeholder="Enter customer email" >
+                <select class="form-control select2" name="customerEmail" id="customerEmail" placeholder="Enter customer email" required>
                     <option value="">Select Email</option>
                   <%  result.forEach(function(mail){ %>
                         <option value="<%=mail.email%>"><%=mail.email%></option>
@@ -56,7 +56,7 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="quotationNo" class="form-label">Quotation Number</label>
-                <select type="text" class="form-control select2" name="quotationNo" id="quotationNo" placeholder="Enter quotation no." required>
+                <select type="text" class="form-control select2" name="quotationNo" id="quotationNo" placeholder="Enter quotation no.">
                     <option value="">Select Quotation</option>
                    <% quotation.forEach(function(quote){ %>
                         <option value="<%=quote.quotation_no%>"><%=quote.quotation_no%></option>  
@@ -67,9 +67,11 @@
               <div class="col-md-6">
                 <label for="reminderType" class="form-label">Reminder Type</label>
                 <select class="form-select" name="reminderType" id="reminderType" required>
-                  <option value="">-- Select Type --</option>
+                  <option value="" disabled>-- Select Type --</option>
                   <option value="quotation">Quotation Acceptance</option>
                   <option value="payment">Payment Reminder</option>
+                  <option value="document">Document Reminder</option>
+                  <option value="queryclosure">Query Closure</option>
                 </select>
               </div>
             </div>

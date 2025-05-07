@@ -384,51 +384,28 @@ app.get("/purchase_query",authenticateRoutes,(req,res)=>{
 })
 
 
-app.get("/purchase_dashboard",authenticateRoutes,(req,res)=>{
-  res.render("purchase_dashboard")})
-
 
 app.post("/purchase_query",(req,res)=>{
-  // I wanted to send to resposne so i can do that by comparing header value
-  const isAjax = req.headers['content-type'] === 'application/json';
-      
-  if(isAjax){
-  const {subworkvalue}=req.body
-  let query2="Select * from license_type where form_name=?";
-  db.query(query2,[subworkvalue],(err,result)=>{
-    if(err){console.log(err);}
-    if (result.length > 0) {
-    
-      res.json({ form_details: result[0]?.application_details });
-    } else {
-      res.json({ form_details: "No details found" });
-    }
-  });
-
-}
-      else{
-const {customername,worktype,subwork,querydate,assignedto,quotationno,quotationdate}=req.body;
-
-  const query="Insert into purchase_query(customer_name,work_type,sub_work,query_date,assigned_to,quotation_no,quotation_sent)values(?,?,?,?,?,?,?)"
-  db.query(query,[customername,worktype,subwork,querydate,assignedto,quotationno,quotationdate],(err,pquery)=>{
+const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date}=req.body;
+  const query="Insert into purchase_query(customer_name,work_type,sub_work,remarks,query_date,assigned_to,query_sts,queryclose_date)values(?,?,?,?,?,?,?,?)"
+  db.query(query,[customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date],(err,pquery)=>{
     if(err){
       console.log("Unable to create Purchase",err)
       return res.send("Unable to create purchase");
     }
-  
     res.redirect("/purchase_dashboard")
-  })}})
+  })})
 
-
-
-app.get("/api/purchase_dashboard",(req,res)=>{
-  const query="Select * from purchase_query";
-  db.query(query,(err,pquery)=>{
-    if(err){console.log("error querying purchase")}
-    res.json(pquery)
-
-  })
-})
+  app.get("/purchase_dashboard",authenticateRoutes,(req,res)=>{
+    const query="Select * from purchase_query"
+    db.query(query,(err,pquery)=>{
+      if(err){
+        return res.send("Error")
+      }
+      res.render("purchase_dashboard",{pquery})})
+    })
+  
+  
 
 app.post("/purchase/delete/:id",(req,res)=>{
   const query="Delete from purchase_query where id=?";
@@ -503,15 +480,15 @@ app.get("/add_quotation",(req,res)=>{
 
 
 app.post("/submit_quotation",(req,res)=>{
-  const {customerName,quotationDate,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
+  const {customerName,quotation_sts,quotationDate,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
   console.log(req.body)
  //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
-    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt)values(?,?,?,?,?) "
+    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt,quotation_sts)values(?,?,?,?,?,?) "
     const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
     
-    db.query(query,[customerName,quotationDate,quotationNo,totalQty,grandTotal],(err,result)=>{
+    db.query(query,[customerName,quotationDate,quotationNo,totalQty,grandTotal,quotation_sts],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
@@ -555,6 +532,9 @@ app.get("/quotation_dashboard",authenticateRoutes,(req,res)=>{
 })
 })
 
+
+
+
 app.post("/delete-quotation/:id",(req,res)=>{
   const query="Delete from quotation where id=?"
   const{id}=req.params
@@ -566,11 +546,6 @@ app.post("/delete-quotation/:id",(req,res)=>{
       }
       res.redirect("/quotation_dashboard")
   })
-})
-
-app.get("/view-quotation/:quotationNo",(req,res)=>{
-  const quotationNo=req.params;
-
 })
 
 app.get("/reminders",(req,res)=>{
@@ -598,8 +573,14 @@ app.get("/reminders",(req,res)=>{
     if(reminderType==="quotation"){
       subject=`Reminder: Quotation Acceptance for ${quotationNo}`
     }
-    else{
+    else if(reminderType==="payment"){
       subject=`Reminder:Payment Due for ${quotationNo}`
+    }
+    else if(reminderType==="document"){
+      subject=`Reminder:Documents Submission Pending`
+    }
+    else if(reminderType===`queryclosure`){
+      subject=`Reminder:Query Closure`
     }
 
    const mailOptions={
