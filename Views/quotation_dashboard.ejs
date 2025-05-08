@@ -70,13 +70,14 @@
         <table class="table table-bordered table-hover table-striped" id="quotationtable">
             <thead class="table-dark">
                 <tr>
-                    <th>S.No</th>
                     <th>Quotation No</th>
                     <th>Customer Name</th>
                     <th>Total Quantity</th>
                     <th>Total Amount</th>
-                    <th>Quotation Date <br>(DD/MM/YYYY)</th>
+                    <th>Created Date <br>(DD/MM/YYYY)</th>
                     <th>Status</th>
+                    <th>Accepted/Rejected Date</th>
+                    <th>Updated By</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -84,7 +85,6 @@
                 <% if (quotations && quotations.length > 0) { %>
                     <% quotations.forEach(function(quotation,index) { %>
                         <tr>
-                            <td><%= index + 1 %></td>
                             <td><%= quotation.quotation_no %></td>
                             <td><%= quotation.cust_name %></td>
                             <td><%= quotation.total_qty %></td>
@@ -99,8 +99,10 @@
                                     <span class="badge bg-warning">Pending</span>
                                 <% }
                                 else{ %>
-                                    <span class="badge bg-light text-dark"><%= quotation.sts %></span>
+                                    <span class="badge bg-dark text-light"><%= quotation.quotation_sts %></span>
                                <% } %>
+                               <td><%=new Date(quotation.acc_rej_date).toLocaleDateString('en-GB')%></td>
+                               <td><%=quotation.updated_by%></td>
                             </td>
                             <td>
                                 <a href="/view-quotation/<%= quotation.id %>" class="btn btn-primary btn-sm mb-1">

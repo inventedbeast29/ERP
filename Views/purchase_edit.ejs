@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Purchase Query</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h4>Edit Purchase Query</h4>
+      </div>
+      <div class="card-body">
+        <form action="/purchase_query/update/<%= pquery.id %>" method="POST">
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+            <label for="customername" class="form-label" >Customer Name</label>
+            <input type="text" class="form-control" id="customername" name="customername" value="<%= pquery.customer_name %>" required disabled>
+          </div>
+          <div class="col-md-6">
+          <label for="worktype" class="form-label">Application Type</label>
+            <input type="text" class="form-control" id="worktype" name="worktype" value="<%= pquery.work_type %>" required disabled>
+          </div>
+        </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+            <label for="subwork" class="form-label">Form Name</label>
+            <input type="text" class="form-control" id="subwork" name="subwork" value="<%= pquery.sub_work %>" required disabled>
+          </div>
+    
+          <div class="col-md-6">
+            <label for="assignedto" class="form-label">Assigned To</label>
+            <input type="text" class="form-control" id="assignedto" name="assignedto" value="<%= pquery.assigned_to %>" required disabled>
+          </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="quotationNo" class="form-label">Query Status</label>
+                <select type="text" class="form-control" id="query_sts" name="query_sts" required >
+                  <option value="">Select Status</option>
+                <option value="Open">Open</option>
+                <option value="Pending">Pending</option>
+                <option value="Closed">Closed</option>
+              </select>
+          </div>
+
+        
+
+          <div class="row mb-3">
+            <label for="remarks" class="form-label">Remarks</label>
+                <textarea name="remarks"><%= pquery.remarks %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -34,18 +34,18 @@
 
     .table-primary th {
       text-align: center !important;
-      background-color: #0d6efd !important;
+      background-color: #0d6efd;
       color: white;
     }
 
     #customer tr {
-      border-bottom: 1px solid #dee2e6 !important;
+      border-bottom: 1px solid #dee2e6 ;
     }
 
     #customer tbody tr:hover {
       background-color: #e9f5ff !important;
     }
-
+  
     .dt-button {
       background-color: #0d6efd !important; /* Bootstrap Primary Blue */
       color: white !important;
@@ -57,7 +57,7 @@
     }
 
     .dt-button:hover {
-      background-color: #0b5ed7 !important;
+      background-color: #cbe0ffcc !important;
       color: white !important;
     }
 
@@ -66,7 +66,10 @@
       justify-content: end;
       margin: 20px 0;
     }
-
+ 
+  .table-responsive{
+    width: 90vw;
+  }
     /* Responsive tweak */
     @media (max-width: 768px) {
       .d-flex.justify-content-between {
@@ -100,7 +103,7 @@
   <div id="filterbutton"></div>
 
   <!-- Customer Table -->
-  <div class="table-responsive shadow-sm rounded bg-white p-3">
+  <div class="table-responsive shadow-sm rounded bg-white ">
     <table class="table table-bordered table-hover align-middle text-center" id="customer">
       <thead class="table-primary">
         <tr>
@@ -108,10 +111,12 @@
           <th>Name</th>
           <th>Phone</th>
           <th>Email</th>
-          <th>Address</th>
           <th>PAN No</th>
           <th>Aadhaar No</th>
           <th>Assigned To</th>
+          <th>Created By</th>
+          <th>Updated By</th>
+          <th>Last Updated</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -139,18 +144,26 @@
 
       tbody.innerHTML = '';
       customer.forEach((cust, index) => {
+        let date=new Date (cust.last_updated).toLocaleDateString('en-GB',{
+          hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
+        });
         const row = `
           <tr>
             <td>${index + 1}</td>
             <td>${cust.name}</td>
             <td>${cust.phone}</td>
             <td>${cust.email}</td>
-            <td>${cust.address}</td>
             <td>${cust.pan}</td>
             <td>${cust.aadhar}</td>
             <td>${cust.Assigned}</td>
+            <td  class="logs">${cust.created_by}</td>
+            <td class="logs">${cust.updated_by}</td>
+            <td class="logs">${date}</td>
             <td>
-              <a href="/customers/${cust.id}/edit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
+              <a href="/customers/edit/${cust.id}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
               <form action="/customers_del/${cust.id}" method="POST" class="d-inline">
                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this customer?')">
                   <i class="bi bi-trash"></i>

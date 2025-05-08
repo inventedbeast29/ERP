@@ -161,11 +161,14 @@
             <th>Assigned To</th>
             <th>Query Status</th>
             <th>Expected Closing Date</th>
+            <th>Updated By</th>
+            <th>Last Status Updated On</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="dashboard-body">
           <% pquery.forEach(function(query, index) { %>
+           
             <tr>
               <td><%= index + 1 %></td>
               <td><%= query.customer_name %></td>
@@ -183,6 +186,8 @@
               <% } %>
             </td>
               <td><%= new Date(query.queryclose_date).toLocaleDateString('en-GB') %></td>
+              <td><%= query.updated_by%></td>
+              <td><%=new Date(query.last_updated).toLocaleDateString('en-GB')%></td>
               <td>
                 <a href="/purchase/edit/<%= query.id %>" class="btn btn-sm btn-warning">Edit</a>
                 <form action="/purchase/delete/<%= query.id %>" method="POST" class="d-inline" onsubmit="return confirm('Delete this Purchase query?');">

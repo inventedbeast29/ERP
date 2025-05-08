@@ -12,6 +12,7 @@
         }
     
         req.user = decoded; // Attach decoded token to request object
+    
         next(); // ✅ Allow access
       });
     }

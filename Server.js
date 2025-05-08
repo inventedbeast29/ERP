@@ -316,10 +316,11 @@ app.get("/customer_dashboard",authenticateRoutes,(req,res)=>{
 })
 
 
-app.post("/add-customer",(req,res)=>{
+app.post("/add-customer",authenticateRoutes,(req,res)=>{
+  const userInfo=req.user.email
   const {name,phone,email,address,pan,aadhar,assigned}=req.body
-  const query="Insert into customers(name,phone,email,address,pan,aadhar,assigned) values(?,?,?,?,?,?,?)";
-  db.query(query,[name,phone,email,address,pan,aadhar,assigned],(err,result)=>{
+  const query="Insert into customers(name,phone,email,address,pan,aadhar,assigned,created_by,updated_by,last_updated) values(?,?,?,?,?,?,?,?,?,Now())";
+  db.query(query,[name,phone,email,address,pan,aadhar,assigned,userInfo,userInfo],(err,result)=>{
       if(err){
         console.log("Cannot Insert data into Customers",err)
       }
@@ -343,7 +344,29 @@ app.get("/api/customer_dashboard",(req,res)=>{
  res.json(customer)
 })})
 
-app.post("/customers_del/:id",(req,res)=>{
+
+app.get("/customers/edit/:id",authenticateRoutes,(req,res)=>{
+  const id=req.params.id
+  const query="Select*from customers where id=?";
+  db.query(query,[id],(err,result)=>{
+    if(err){return res.send("error")}
+    let customer=result[0];
+    res.render("update_customer",{customer})
+  })
+
+})
+app.post("/customers/update/:id",authenticateRoutes,(req,res)=>{
+  const userInfo=req.user.email;
+  const id=req.params.id
+  const {phone,email,address,pan,aadhar}=req.body;
+  const query=  "UPDATE customers   SET  phone = ?, email = ?, address = ?, pan = ?, aadhar = ?, updated_by = ?, last_updated = NOW()  WHERE id = ?"
+  db.query(query,[phone,email,address,pan,aadhar,userInfo,id],(err,result)=>{
+    if(err){return res.send("cannot update customer",err)}
+    res.redirect("/customer_dashboard")
+  })
+})
+
+app.post("/customers_del/:id",authenticateRoutes,(req,res)=>{
   const query="Delete  from customers where id=?"
   db.query(query,[req.params.id],(err,result)=>{
     if(err){console.log("Unable to delete customers",err)
@@ -385,10 +408,11 @@ app.get("/purchase_query",authenticateRoutes,(req,res)=>{
 
 
 
-app.post("/purchase_query",(req,res)=>{
+app.post("/purchase_query",authenticateRoutes,(req,res)=>{
+  const userInfo=req.user.email;
 const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date}=req.body;
-  const query="Insert into purchase_query(customer_name,work_type,sub_work,remarks,query_date,assigned_to,query_sts,queryclose_date)values(?,?,?,?,?,?,?,?)"
-  db.query(query,[customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date],(err,pquery)=>{
+  const query="Insert into purchase_query(customer_name,work_type,sub_work,remarks,query_date,assigned_to,query_sts,queryclose_date,updated_by,last_updated)values(?,?,?,?,?,?,?,?,?,Now())"
+  db.query(query,[customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date,userInfo],(err,pquery)=>{
     if(err){
       console.log("Unable to create Purchase",err)
       return res.send("Unable to create purchase");
@@ -405,7 +429,30 @@ const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,quer
       res.render("purchase_dashboard",{pquery})})
     })
   
-  
+
+    app.get("/purchase/edit/:query_id",(req,res)=>{
+      const id=req.params.query_id;
+      const query="select * from purchase_query where id=?";
+      db.query(query,[id],(err,result)=>{
+        if(err){return res.send("Error")}
+      let pquery=result[0];
+      console.log(pquery)
+        res.render("purchase_edit",{pquery})
+      })
+    
+    })
+  app.post("/purchase_query/update/:query_id",authenticateRoutes,(req,res)=>{
+    const userInfo=req.user.email
+      const id=req.params.query_id;
+      const{query_sts,remarks}=req.body
+      const query="UPDATE purchase_query set query_sts=?,remarks=?,updated_by=?,last_updated=Now() where id=? "
+      db.query(query,[query_sts,remarks,userInfo,id],(err,result)=>{
+        if(err){
+          return res.send("Error editing purchase query".err)
+        }
+        res.redirect("/purchase_dashboard")
+      })
+  })
 
 app.post("/purchase/delete/:id",(req,res)=>{
   const query="Delete from purchase_query where id=?";
@@ -479,16 +526,17 @@ app.get("/add_quotation",(req,res)=>{
 })
 
 
-app.post("/submit_quotation",(req,res)=>{
-  const {customerName,quotation_sts,quotationDate,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
+app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
+  let userInfo=req.user.email
+  const {customerName,quotation_sts,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
   console.log(req.body)
  //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
-    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt,quotation_sts)values(?,?,?,?,?,?) "
+    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt,quotation_sts,acc_rej_date,updated_by)values(?,Now(),?,?,?,?,?,?) "
     const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
     
-    db.query(query,[customerName,quotationDate,quotationNo,totalQty,grandTotal,quotation_sts],(err,result)=>{
+    db.query(query,[customerName,quotationNo,totalQty,grandTotal,quotation_sts,,userInfo],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
