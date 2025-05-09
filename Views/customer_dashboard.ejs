@@ -163,6 +163,7 @@
             <td class="logs">${cust.updated_by}</td>
             <td class="logs">${date}</td>
             <td>
+              <a href="/view/customer/${cust.id}" class="btn btn-primary btn-sm mb-1"> <i class="bi bi-eye-fill"></i>    </a>
               <a href="/customers/edit/${cust.id}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
               <form action="/customers_del/${cust.id}" method="POST" class="d-inline">
                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this customer?')">

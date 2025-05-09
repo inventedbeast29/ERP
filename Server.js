@@ -376,6 +376,16 @@ app.post("/customers_del/:id",authenticateRoutes,(req,res)=>{
   })
 })
 
+app.get("/view/customer/:cust_id",(req,res)=>{
+  const id=req.params.cust_id;
+  const query="Select * from customers where id=?";
+  db.query(query,[id],(err,result)=>{
+      if(err){return res.send("Unable to view"),err}
+      let customer=result[0];
+      console.log(customer)
+      res.render("view_customer",{customer})
+  })
+})
 
 //PURCHASE REQUEST DETAILS TO BE ADDED.
 

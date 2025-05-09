@@ -115,7 +115,6 @@
 
     .table-container {
       max-height: 500px;
-      overflow-y: auto;
     }
 
     /* Mobile responsiveness */
@@ -189,6 +188,7 @@
               <td><%= query.updated_by%></td>
               <td><%=new Date(query.last_updated).toLocaleDateString('en-GB')%></td>
               <td>
+                <a href="/view/purchase/<%=query.id%>" class="btn btn-primary btn-sm mb-1"> <i class="bi bi-eye-fill"></i></a>
                 <a href="/purchase/edit/<%= query.id %>" class="btn btn-sm btn-warning">Edit</a>
                 <form action="/purchase/delete/<%= query.id %>" method="POST" class="d-inline" onsubmit="return confirm('Delete this Purchase query?');">
                   <button class="btn btn-sm btn-danger">Delete</button>

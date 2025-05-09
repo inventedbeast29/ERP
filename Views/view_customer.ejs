@@ -23,68 +23,59 @@
   <div class="container mt-5">
     <div class="card shadow-lg rounded-4">
       <div class="card-header bg-primary text-white text-center">
-        <h4>Add New Customer</h4>
+        
       </div>
       <div class="card-body">
-        <form action="/add-customer" method="POST">
+        <form>
           <div class="row">
             <!-- Customer Name -->
             <div class="col-md-6 mb-3">
               <label for="name" class="form-label">Customer Name</label>
-              <input type="text" class="form-control" id="name" name="name" required>
+              <input type="text" class="form-control" id="name" name="name" disabled value="<%=customer.name%>">
             </div>
 
             <!-- Phone -->
             <div class="col-md-6 mb-3">
               <label for="phone" class="form-label" >Phone Number</label>
-              <input type="tel" pattern="[0-9]{10}" class="form-control" id="phone" name="phone" placeholder="10 digit number" required>
+              <input type="tel" pattern="[0-9]{10}" class="form-control" id="phone" name="phone" placeholder="10 digit number"disabled value="<%=customer.phone%>">
             </div>
 
             <!-- Email -->
             <div class="col-md-6 mb-3">
               <label for="email" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="email" name="email" required>
+              <input type="email" class="form-control" id="email" name="email" disabled value="<%=customer.email%>">
             </div>
 
             <!-- Address -->
             <div class="col-md-6 mb-3">
               <label for="address" class="form-label">Address</label>
-              <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+              <textarea class="form-control" id="address" name="address" rows="2" disabled><%=customer.address%></textarea>
             </div>
 
             <!-- PAN Number -->
             <div class="col-md-6 mb-3">
               <label for="pan" class="form-label">PAN Number</label>
-              <input type="text" class="form-control" id="pan" name="pan">
+              <input type="text" class="form-control" id="pan" name="pan" value="<%=customer.pan%>" disabled>
             </div>
 
             <!-- Aadhaar Number -->
             <div class="col-md-6 mb-3">
               <label for="aadhaar" class="form-label">Aadhaar Number</label>
-              <input type="text" class="form-control" id="aadhar" name="aadhar" pattern="[0-9]{12}">
+              <input type="text" class="form-control" id="aadhar" name="aadhar" pattern="[0-9]{12}" disabled value="<%=customer.aadhar%>">
             </div>
           </div>
 
 
           <div class="col-md-6 mb-3">
   <label for="assignedTo" class="form-label" required>Assigned To</label>
-  <select class="form-select" id="assignedTo" name="assigned" required>
-    <option value="">Select Employee</option>
-    <% if (employees.length === 0) { %>
-      <option disabled>No employees found</option>
-    <% } else { %>
-      <% employees.forEach((emp) => { %>
-        <option value="<%= emp.name %>"><%= emp.name %></option>
-      <% }) %>
-    <% } %>
-  </select>
+  <input type="text" class="form-control" id="assignedTo" name="assignedTo" value="<%=customer.Assigned%>" disabled>
+ 
 </div>
 
            
 
           <!-- Submit Button -->
-          <div class="d-grid mt-3">
-            <button type="submit" class="btn btn-primary">Add Customer</button>
+          
           </div>
         </form>
       </div>
