@@ -14,7 +14,7 @@ app.use(cookieparser())
 const authenticateRoutes = require('./authenticateRoutes');
 const methodoverride=require('method-override');
 const { default: Swal } = require('sweetalert2');
-const { disconnect } = require('process');
+const { disconnect, prependListener } = require('process');
 // Set EJS as view engine]
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // If needed
@@ -475,6 +475,17 @@ app.post("/purchase/delete/:id",(req,res)=>{
   })
 })
 
+app.get("/view/purchase/:query_id",(req,res)=>{
+  const id=req.params.query_id
+  const query="select * from purchase_query where id=? "
+  db.query(query,[id],(err,qresult)=>{
+    if(err){return res.send("Cannot view Purchase query",err)}
+    let result=qresult[0];
+    console.log(result)
+res.render("purchase_view",{result})
+  })
+})
+
 
 //Add License Type details
 app.get("/add_license",authenticateRoutes,(req,res)=>{
@@ -538,15 +549,15 @@ app.get("/add_quotation",(req,res)=>{
 
 app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
   let userInfo=req.user.email
-  const {customerName,quotation_sts,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,remarks}=req.body
+  const {customerName,gst,quotation_sts,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,govtfee,constfee,remarks}=req.body
   console.log(req.body)
  //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
-    const query="Insert into quotation (cust_name,qtn_date,quotation_no,total_qty,total_amt,quotation_sts,acc_rej_date,updated_by)values(?,Now(),?,?,?,?,?,?) "
+    const query="Insert into quotation (cust_name,gst,qtn_date,quotation_no,total_qty,total_amt,quotation_sts,acc_rej_date,updated_by,govtfee,const_fee)values(?,?,Now(),?,?,?,?,?,?,?,?) "
     const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
     
-    db.query(query,[customerName,quotationNo,totalQty,grandTotal,quotation_sts,,userInfo],(err,result)=>{
+    db.query(query,[customerName,gst,quotationNo,totalQty,grandTotal,quotation_sts,,userInfo,govtfee,constfee],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
@@ -590,7 +601,16 @@ app.get("/quotation_dashboard",authenticateRoutes,(req,res)=>{
 })
 })
 
-
+app.get("/view-quotation/:id",(req,res)=>{
+  const id=req.params.id;
+  const query="Select * from quotation where id=?"
+  db.query(query,[id],(err,result)=>{
+    if(err){return res.send("Cannot vieq quotation",err)}
+    const qresult=result[0];
+    console.log(qresult)
+    res.render("quotation_view",{qresult})
+  })
+})
 
 
 app.post("/delete-quotation/:id",(req,res)=>{

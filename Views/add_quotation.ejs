@@ -27,10 +27,7 @@
     padding: 20px;
     border-radius: 8px;
   }
-  #quotationNo{
-    position:relative;
-    left: 30%;
-  }
+
 
   /* Additional border for the form fields */
   .form-control {
@@ -67,11 +64,11 @@
               <div class="col-md-6">
                 <label for="quotation_sts" class="form-label">Quotation Status</label>
                 <select id="quotation_sts" name="quotation_sts" class="form-select " required>
-                  <option value="" disabled>Select Status</option>
                   <option value="New">New</option>
-                  <option value="Pending">Pending</option>
+                
+                  <!-- <option value="Pending">Pending</option>
                   <option value="Accepted">Accepted</option>
-                  <option value="Rejected">Rejected</option>
+                  <option value="Rejected">Rejected</option> -->
                 </select>
               </div>
 
@@ -82,10 +79,16 @@
             <!-- Valid Till Date Row -->
             <div class="row mb-3">
                 
-                <div class="col-md-3">
+                <div class="col-md-6">
                   <label for="quotationNo" id="quotationNo" class="form-label">Quotation No</label>
                   <input type="text" id="quotationNo" name="quotationNo" class="form-control" required>
                 </div>
+                  
+                <div class="col-md-6">
+                <label for="gst" id="gst" class="form-label">GSTIN (If Applicable)</label>
+                <input type="text" id="gst" name="gst" class="form-control">
+              </div>
+
             </div>
 
             <h2 class="mt-4">Item Details</h2>
@@ -135,7 +138,18 @@
               <button type="button" class="btn btn-success" id="addItemBtn">+ Add Item</button>
           </div>
           <hr>
-        
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="govtfee" class="form-label" >Goverment Fees</label>
+              <input type="number" class="form-control" name="govtfee" id="govtfee"> 
+            </div>
+            <div class="col-md-6">
+              <label for="constfee" class="form-label" >Consultation Fees</label>
+              <input type="number" class="form-control" name="constfee" id="constfee"> 
+          </div>
+          </div>
+        <hr>
           <div class="row mb-3">          
               <p style="font-weight: bolder;font-size:25px">Grand Total</p>
              
@@ -193,6 +207,8 @@
     const totalDiscamt=document.querySelector("#totalDiscamt");
     const totalTax=document.querySelector("#totalTax")
     const grandTotal=document.querySelector("#grandTotal")
+    const govtfee=document.querySelector("#govtfee");
+    const constfee=document.querySelector("#constfee");
 
       let index=1;
    document.addEventListener("DOMContentLoaded", function () {
@@ -231,6 +247,7 @@ $(newRow).find("select.select2").select2();        // Init clone
 }); })
 
 
+
   
 
 document.addEventListener("input",function(e){
@@ -247,12 +264,18 @@ document.addEventListener("input",function(e){
         const tax = parseFloat(row.querySelector('[name="tax[]"]').value) || 0;
 
         const amount=(quantity*unitPrice)-discount+tax;
-        row.querySelector('[name="amount[]"]').value = amount.toFixed(2);
-
+        row.querySelector('[name="amount[]"]').value = amount.toFixed(2)
 
         updateTotal()
 
   }
+})
+
+govtfee.addEventListener("input",function(){
+  updateTotal();
+})
+constfee.addEventListener("input",function(){
+  updateTotal()
 })
 
 function updateTotal(){
@@ -260,7 +283,8 @@ let tqty=0;
   let tdisc=0;
   let ttax=0;
   let tamt=0;
-
+ 
+ 
   document.querySelectorAll('[name="amount[]"]').forEach(function(amount) {
     tamt += parseFloat(amount.value) || 0;
   });
@@ -273,10 +297,14 @@ let tqty=0;
   document.querySelectorAll('[name="tax[]"]').forEach(function(tax) {
     ttax += parseFloat(tax.value) || 0;
   })
+
+    let govtfeevalue=parseFloat(document.querySelector('[name="govtfee"]').value)||0
+    let constfeevalue=parseFloat(document.querySelector('[name="constfee"]').value)||0
+
        totalQty.value=tqty;
       totalDiscamt.value=tdisc
       totalTax.value=ttax;
-      grandTotal.value=tamt;
+      grandTotal.value=(tamt+govtfeevalue+constfeevalue).toFixed(2);
 
 }
 
