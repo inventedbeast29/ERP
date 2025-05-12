@@ -549,15 +549,15 @@ app.get("/add_quotation",(req,res)=>{
 
 app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
   let userInfo=req.user.email
-  const {customerName,gst,quotation_sts,quotationNo,totalQty,grandTotal,paymentTerms,termsConditions,govtfee,constfee,remarks}=req.body
-  console.log(req.body)
+  const {customerName,gst,quotation_sts,quotationNo,totalTax,totalDiscamt,totalQty,grandTotal,paymentTerms,termsConditions,govtfee,constfee,remarks}=req.body
+ 
  //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
-    const query="Insert into quotation (cust_name,gst,qtn_date,quotation_no,total_qty,total_amt,quotation_sts,acc_rej_date,updated_by,govtfee,const_fee)values(?,?,Now(),?,?,?,?,?,?,?,?) "
+    const query="Insert into quotation (cust_name,gst,qtn_date,quotation_no,total_qty,totalTax,total_disc,total_amt,quotation_sts,acc_rej_date,updated_by,govtfee,const_fee)values(?,?,Now(),?,?,?,?,?,?,?,?,?,?) "
     const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
     
-    db.query(query,[customerName,gst,quotationNo,totalQty,grandTotal,quotation_sts,,userInfo,govtfee,constfee],(err,result)=>{
+    db.query(query,[customerName,gst,quotationNo,totalQty,totalTax,totalDiscamt,grandTotal,quotation_sts,,userInfo,govtfee,constfee],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
@@ -572,7 +572,7 @@ app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
           const disc=discount[i];
           const taxAmt=tax[i];
           const amt=amount[i];
-          console.log(`Inserting Items ${i+1}`,{desc, qty, price, disc, taxAmt, amt })
+        //  console.log(`Inserting Items ${i+1}`,{desc, qty, price, disc, taxAmt, amt })
             db.query(query2,[quotationNo,desc,qty,price,disc,taxAmt,amt,paymentTerms,termsConditions,remarks],(err,result)=>{
               if(err){
                 console.log("error",err);
@@ -596,20 +596,33 @@ app.get("/quotation_dashboard",authenticateRoutes,(req,res)=>{
   const query="select * from quotation";
   db.query(query,(err,quotations)=>{
     if(err){console.log(err)}
-  
-  res.render("quotation_dashboard",{quotations});
+    res.render("quotation_dashboard",{quotations});
+    })
 })
-})
+
 
 app.get("/view-quotation/:id",(req,res)=>{
   const id=req.params.id;
+  const qNo=req.query.qno
   const query="Select * from quotation where id=?"
+ const query2="select * from quotation_items where quotation_no=?"
+ const query3="select * from quotation_items where quotation_no=?"
   db.query(query,[id],(err,result)=>{
-    if(err){return res.send("Cannot vieq quotation",err)}
+    if(err){return res.send("Cannot view quotation",err)}
     const qresult=result[0];
-    console.log(qresult)
-    res.render("quotation_view",{qresult})
+    //console.log(qresult);
+   
+    db.query(query2,[qNo],(err,q2result)=>{
+      if(err){return res.send("error",err)}
+      const q2ans=q2result[0];
+      console.log(q2ans)
+      db.query(query3,[qNo],(err,result)=>{
+        if(err){return res.send("Error",err)}
+        console.log("ITEMS",result)
+        res.render("quotation_view",{qresult,q2ans,result})
+      })
   })
+})
 })
 
 

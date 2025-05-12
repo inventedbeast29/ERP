@@ -49,12 +49,12 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="customerName" class="form-label">Customer Name</label>
-               <input type="text" class="form-control" value="<%=qresult.cust_name %>">
+               <input type="text" class="form-control" disabled value="<%=qresult.cust_name %>">
               </div>
 
               <div class="col-md-6">
                 <label for="quotation_sts" class="form-label">Quotation Status</label>
-               <input type="text" class="form-control" value="<%= qresult.quotation_sts %>">
+               <input type="text" class="form-control" disabled value="<%= qresult.quotation_sts %>">
             </div>
             </div>
 
@@ -63,68 +63,100 @@
                 
                 <div class="col-md-6">
                   <label for="quotationNo" id="quotationNo" class="form-label">Quotation No</label>
-                  <input type="text" id="quotationNo" name="quotationNo" class="form-control" value="<%=qresult.quotation_no  %>">
+                  <input type="text" id="quotationNo" name="quotationNo" class="form-control"disabled value="<%=qresult.quotation_no  %>">
                 </div>
                   
                 <div class="col-md-6">
                 <label for="gst" id="gst" class="form-label">GSTIN (If Applicable)</label>
-                <input type="text" id="gst" name="gst" class="form-control" value="<%= qresult.gst%>">
+                <input type="text" id="gst" name="gst" class="form-control" disabled value="<%= qresult.gst%>">
               </div>
 
             </div>
+              <hr>
 
-            
-          <hr>
-
+            <div class="row mb-3">    
+              <div class="col-md-12">       
+          <table class="table table-bordered">
+         <thead> <b>ITEM LIST</b>
+        <tr>
+             <th>S.No.</th>
+            <th>Item Description</th>
+             <th>Quantity</th>
+               <th>Unit Price</th>
+             <th>Discount</th>
+           <th>Tax</th>
+           <th>Total Amount</th>
+            </tr>
+        </thead>
+       <tbody>
+         <% if (result && result.length > 0) { %>
+      <% result.forEach(function(item,index){ %>
+        <tr>
+          <td><%=index+1 %> </td>
+          <td><%=item.item_desc %></td>
+          <td><%=item.quantity %> </td>
+          <td><%=item.unit_price %></td>
+          <td><%=item.discount_amt %></td>
+          <td><%=item.tax_amt %></td>
+          <td><%=item.total_amt %></td>
+     </tr>
+     <% }); %>
+        <%}%>
+       </tbody>
+       </table>
+    </div>
+    </div>
+      <hr>
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="govtfee" class="form-label" >Goverment Fees</label>
-              <input type="number" class="form-control" name="govtfee" id="govtfee" value="<%= qresult.govtfee %>"> 
+              <label for="govtfee" class="form-label">Goverment Fees</label>
+              <input type="number" class="form-control" name="govtfee" id="govtfee" readonly value="<%= qresult.govtfee %>"> 
             </div>
             <div class="col-md-6">
-              <label for="constfee" class="form-label" >Consultation Fees</label>
-              <input type="number" class="form-control" name="constfee" id="constfee" value="<%= qresult.const_fee %>"> 
+              <label for="constfee" class="form-label"disabled >Consultation Fees</label>
+              <input type="number" class="form-control" name="constfee" readonly id="constfee" value="<%= qresult.const_fee %>"> 
           </div>
           </div>
         <hr>
           <div class="row mb-3">          
-              <p style="font-weight: bolder;font-size:25px">Grand Total</p>
+              <p style="font-weight: bolder;font-size:25px"disabled>Grand Total</p>
              
             <div class="col-md-3">
               <label for="tquantity" class="form-label" >Total Quantity</label>
-                <input type="number" class="form-control" name="totalQty" id="totalQty" value="<%= qresult.total_qty %>" readonly>
+                <input type="number" class="form-control" name="totalQty" id="totalQty" value="<%= qresult.total_qty %>" disabled>
               
             </div>
             <div class="col-md-3">
               <label for="discAmt" class="form-label" >Total Discount</label>
-                <input type="number" class="form-control" name="totalDiscamt" id="totalDiscamt" value="<%=qresult.disc_amt %>" readonly>
+                <input type="number" class="form-control" name="totalDiscamt" id="totalDiscamt" value="<%=qresult.total_disc %>" disabled>
             </div>
             <div class="col-md-3">
               <label for="tTax" class="form-label" >Total Tax Amount</label>
-              <input type="number" class="form-control" name="totalTax" id="totalTax"value="<%=qresult.  %>" readonly>
+              <input type="number" class="form-control" name="totalTax" id="totalTax"value="<%=qresult.totalTax%>" disabled>
             </div>
             <div class="col-md-3">
               <label for="grandtotal" class="form-label" >Grand Total Amount</label>
-                <input type="number" class="form-control" name="grandTotal" id="grandTotal" value="<%=qresult.total_amt  %>" readonly>
+                <input type="number" class="form-control" name="grandTotal" id="grandTotal" value="<%=qresult.total_amt  %>" disabled>
             </div>
           </div>
           <hr>
+          
             <!-- Payment Terms and Conditions Row -->
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="paymentTerms" class="form-label">Payment Terms</label>
-                    <textarea id="paymentTerms" name="paymentTerms" class="form-control" ><%=  %></textarea>
+                    <textarea id="paymentTerms" name="paymentTerms" class="form-control" disabled><%=q2ans.payment_term  %></textarea>
                 </div>
                 <div class="col-md-6">
                     <label for="termsConditions" class="form-label">Terms & Conditions</label>
-                    <textarea id="termsConditions" name="termsConditions" class="form-control"><%=  %></textarea>
+                    <textarea id="termsConditions" name="termsConditions" class="form-control" disabled><%=q2ans.term_condition  %></textarea>
                 </div>
             </div>
 
             <!-- Remarks Row -->
             <div class="mb-3">
                 <label for="remarks" class="form-label">Remarks/Notes</label>
-                <textarea id="remarks" name="remarks" class="form-control"><%=  %></textarea>
+                <textarea id="remarks" name="remarks" class="form-control" disabled><%=q2ans.notes %></textarea>
             </div>
               
       
