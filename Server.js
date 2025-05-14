@@ -624,7 +624,49 @@ app.get("/view-quotation/:id",(req,res)=>{
   })
 })
 })
+app.get("/edit-quotation/:id",(req,res)=>{
+  const id=req.params.id;
+  const qNo2=req.query.qno
+  const query="Select * from quotation where id=?"
+ const query2="select * from quotation_items where quotation_no=?"
+ const query3="select * from quotation_items where quotation_no=?"
+  db.query(query,[id],(err,result)=>{
+    if(err){return res.send("Cannot view quotation",err)}
+    const qresult=result[0];
+    //console.log(qresult);
+   
+    db.query(query2,[qNo2],(err,q2result)=>{
+      if(err){return res.send("error",err)}
+      const q2ans=q2result[0];
+      db.query(query3,[qNo2],(err,result)=>{
+        if(err){return res.send("Error",err)}
+        console.log(q2ans)
+        res.render("edit_quotation",{qresult,q2ans,result})
+})
+    })
+  })})
 
+  app.post("/edit_quotation",(req,res)=>{
+    const {quotation_sts,acc_rej_date,paymentTerms,termsConditions,remarks}=req.body
+    
+    const qNo=req.query.qno
+    const query="Update quotation set quotation_sts=?,acc_rej_date=?,last_updated=Now() where quotation_no=?"
+    const query2="Update quotation_items set payment_term=?,term_condition=?,notes=? where quotation_no=?"
+    db.query(query,[quotation_sts,acc_rej_date,qNo],(err,result)=>{
+      if(err){
+        console.log(err);
+         return res.send("Error Updating Quotation")}
+
+        db.query(query2,[paymentTerms,termsConditions,remarks,qNo],(err,result)=>{
+            if(err){
+              console.log(err);
+              return res.send("Cannot Update Quotation")}
+            res.redirect("/quotation_dashboard")
+      })
+      
+    })
+  })
+  
 
 app.post("/delete-quotation/:id",(req,res)=>{
   const query="Delete from quotation where id=?"

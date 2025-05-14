@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+   
+ 
+</head>
+<style>
+  .amount,#totalQty,#totalDiscamt,#totalTax,#grandTotal {
+    background-color: rgba(18, 19, 19, 0.071);
+  }
+
+  /* Border for the container */
+  .border-container {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+
+  /* Additional border for the form fields */
+  .form-control {
+    border-radius: 4px;
+  }
+.sNo{
+  max-width: 4vw !important;
+  background-color: rgba(44, 31, 31, 0.078);
+}
+.submit{
+    width: 100%;
+    text-align: center;
+}
+</style>
+<body>
+  <a href="/quotation_dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    <div class="container my-4 border-container">
+        <div class="d-flex justify-content-center mb-4">
+            <!-- Back to Dashboard Button -->
+            <h1 class="text-center">Quotation</h1>
+        </div>
+        
+        <!-- Quotation Details Form -->
+        <form action="/edit_quotation?qno=<%= qresult.quotation_no %>" method="post">
+            
+            <!-- Customer Details Row -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="customerName" class="form-label">Customer Name</label>
+               <input type="text" class="form-control" disabled value="<%=qresult.cust_name %>">
+              </div>
+
+              <div class="col-md-4">
+                <label for="quotation_sts" class="form-label">Quotation Status</label>
+               <select id="quotation_sts" name="quotation_sts" class="form-select " required>
+                <option value="Pending">Pending</option>
+                  <option value="Accepted">Accepted</option>
+                  <option value="Rejected">Rejected</option>
+               </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="acc_rej_date" class="form-label">Accepted/Rejected Date</label>
+                <input type="date" name="acc_rej_date" class="form-control"required>
+            </div>
+            </div>
+
+            <!-- Valid Till Date Row -->
+            <div class="row mb-3">
+                
+                <div class="col-md-6">
+                  <label for="quotationNo" id="quotationNo" class="form-label">Quotation No</label>
+                  <input type="text" id="quotationNo" name="quotationNo" class="form-control"disabled value="<%=qresult.quotation_no  %>">
+                </div>
+                  
+                <div class="col-md-6">
+                <label for="gst" id="gst" class="form-label">GSTIN (If Applicable)</label>
+                <input type="text" id="gst" name="gst" class="form-control" disabled value="<%= qresult.gst%>">
+              </div>
+
+            </div>
+              <hr>
+
+            <div class="row mb-3">    
+              <div class="col-md-12">       
+          <table class="table table-bordered">
+         <thead> <b>ITEM LIST</b>
+        <tr>
+             <th>S.No.</th>
+            <th>Item Description</th>
+             <th>Quantity</th>
+               <th>Unit Price</th>
+             <th>Discount</th>
+           <th>Tax</th>
+           <th>Total Amount</th>
+            </tr>
+        </thead>
+       <tbody>
+         <% if (result && result.length > 0) { %>
+      <% result.forEach(function(item,index){ %>
+        <tr>
+          <td><%=index+1 %> </td>
+          <td><%=item.item_desc %></td>
+          <td><%=item.quantity %> </td>
+          <td><%=item.unit_price %></td>
+          <td><%=item.discount_amt %></td>
+          <td><%=item.tax_amt %></td>
+          <td><%=item.total_amt %></td>
+     </tr>
+     <% }); %>
+        <%}%>
+       </tbody>
+       </table>
+    </div>
+    </div>
+      <hr>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="govtfee" class="form-label">Goverment Fees</label>
+              <input type="number" class="form-control" name="govtfee" id="govtfee" disabled value="<%= qresult.govtfee %>"> 
+            </div>
+            <div class="col-md-6">
+              <label for="constfee" class="form-label"disabled >Consultation Fees</label>
+              <input type="number" class="form-control" name="constfee" disabled id="constfee" value="<%= qresult.const_fee %>"> 
+          </div>
+          </div>
+        <hr>
+          <div class="row mb-3">          
+              <p style="font-weight: bolder;font-size:25px"disabled>Grand Total</p>
+             
+            <div class="col-md-3">
+              <label for="tquantity" class="form-label" >Total Quantity</label>
+                <input type="number" class="form-control" name="totalQty" id="totalQty" value="<%= qresult.total_qty %>" disabled>
+              
+            </div>
+            <div class="col-md-3">
+              <label for="discAmt" class="form-label" >Total Discount</label>
+                <input type="number" class="form-control" name="totalDiscamt" id="totalDiscamt" value="<%=qresult.total_disc %>" disabled>
+            </div>
+            <div class="col-md-3">
+              <label for="tTax" class="form-label" >Total Tax Amount</label>
+              <input type="number" class="form-control" name="totalTax" id="totalTax"value="<%=qresult.totalTax%>" disabled>
+            </div>
+            <div class="col-md-3">
+              <label for="grandtotal" class="form-label" >Grand Total Amount</label>
+                <input type="number" class="form-control" name="grandTotal" id="grandTotal" value="<%=qresult.total_amt  %>" disabled>
+            </div>
+          </div>
+          <hr>
+          
+            <!-- Payment Terms and Conditions Row -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="paymentTerms" class="form-label">Payment Terms</label>
+                    <textarea id="paymentTerms" name="paymentTerms" class="form-control"><%=q2ans.payment_term %></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label for="termsConditions" class="form-label">Terms & Conditions</label>
+                    <textarea id="termsConditions" name="termsConditions" class="form-control" ><%=q2ans.term_conditio%></textarea>
+                </div>
+            </div>
+
+            <!-- Remarks Row -->
+            <div class="mb-3">
+                <label for="remarks" class="form-label">Remarks/Notes</label>
+                <textarea id="remarks" name="remarks" class="form-control"><%=q2ans.notes %></textarea>
+            </div>
+              <div class="mb-3">
+           <button type="submit" class="btn btn-primary submit">Update</button>
+             </div>     
+            </div>
+            </div>
+        
+        </form>
+    </div>
+    </body>
+    </html>
+
+
+</body>
+</html>
