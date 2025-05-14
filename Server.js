@@ -10,11 +10,13 @@ const { Console, error } = require('console');
 const bcrypt=require("bcrypt");
 const jwt =require("jsonwebtoken");
 const cookieparser=require("cookie-parser");
-app.use(cookieparser())
-const authenticateRoutes = require('./authenticateRoutes');
+app.use(cookieparser());
+const authenticateRoute=require("./authenticateRoutes")
 const methodoverride=require('method-override');
 const { default: Swal } = require('sweetalert2');
 const { disconnect, prependListener } = require('process');
+
+
 // Set EJS as view engine]
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // If needed
@@ -107,7 +109,7 @@ main()
 
 app.get("/login",(req,res)=>{
   const query="select distinct role from users";
-  db.query(query,[],(err,urole)=>{
+  db.query(query,(err,urole)=>{
     if(err){
       console.log("error",err)
     }
@@ -165,13 +167,13 @@ app.post("/login",(req, res) => {
   })
   });
 
+    app.use(authenticateRoute) //Authentication of users to access the routes
 
-
-app.get("/main",authenticateRoutes,(req,res)=>{
+app.get("/main",(req,res)=>{
   res.render("main");
 })
 
-// app.get("/employee",authenticateRoutes,((req,res)=>{
+// app.get("/employee",((req,res)=>{
 //   const query="Select * from users"
 //   db.query(query,(err,result)=>{
 //     if(err){
@@ -185,7 +187,7 @@ app.get("/main",authenticateRoutes,(req,res)=>{
 
 // JSON API endpoint
     
-app.get("/api/employee", authenticateRoutes, (req, res) => {
+app.get("/api/employee",(req, res) => {
   const query="Select * from users"
   db.query(query, (err, users) => {
     if (err) {
@@ -193,12 +195,12 @@ app.get("/api/employee", authenticateRoutes, (req, res) => {
       return res.status(500).json({ error: "No users found" })}
   
      res.json(users);
-     // Send JSON, not render
+    
     })})
   
 
 
-app.get("/employee", authenticateRoutes, (req, res) => {
+app.get("/employee",(req, res) => {
   res.render("employee"); // No users passed — table will be filled by JS
 });
 
@@ -220,7 +222,7 @@ app.post("/logout",(req,res)=>{
 
 })
 
-app.get("/adduser",authenticateRoutes,(req,res)=>{
+app.get("/adduser",(req,res)=>{
   res.render("userform");
 })
 
@@ -275,7 +277,7 @@ if(result){
 })})})})
 
 
-app.get("/updateuser",authenticateRoutes,(req,res)=>{
+app.get("/updateuser",(req,res)=>{
   const query="Select * from users"
   db.query(query, (err, users) => {
     if (err) {
@@ -286,7 +288,7 @@ app.get("/updateuser",authenticateRoutes,(req,res)=>{
 })})
 
 
-app.get("/dashboard",authenticateRoutes,(req,res)=>{
+app.get("/dashboard",(req,res)=>{
     const query="Select * from users"
     db.query(query, (err, user) => {
       if (err) {
@@ -302,7 +304,7 @@ app.get("/dashboard",authenticateRoutes,(req,res)=>{
 
 // To show employyes in customer dropdown
 
-app.get("/add-customer",authenticateRoutes,(req,res)=>{
+app.get("/add-customer",(req,res)=>{
   const query="Select * from users"
   db.query(query,(err,employees)=>{
     if(err){console.log("Unable to query users")
@@ -311,12 +313,12 @@ app.get("/add-customer",authenticateRoutes,(req,res)=>{
   })
 })
 
-app.get("/customer_dashboard",authenticateRoutes,(req,res)=>{
+app.get("/customer_dashboard",(req,res)=>{
   res.render("customer_dashboard");
 })
 
 
-app.post("/add-customer",authenticateRoutes,(req,res)=>{
+app.post("/add-customer",(req,res)=>{
   const userInfo=req.user.email
   const {name,phone,email,address,pan,aadhar,assigned}=req.body
   const query="Insert into customers(name,phone,email,address,pan,aadhar,assigned,created_by,updated_by,last_updated) values(?,?,?,?,?,?,?,?,?,Now())";
@@ -345,7 +347,7 @@ app.get("/api/customer_dashboard",(req,res)=>{
 })})
 
 
-app.get("/customers/edit/:id",authenticateRoutes,(req,res)=>{
+app.get("/customers/edit/:id",(req,res)=>{
   const id=req.params.id
   const query="Select*from customers where id=?";
   db.query(query,[id],(err,result)=>{
@@ -355,7 +357,7 @@ app.get("/customers/edit/:id",authenticateRoutes,(req,res)=>{
   })
 
 })
-app.post("/customers/update/:id",authenticateRoutes,(req,res)=>{
+app.post("/customers/update/:id",(req,res)=>{
   const userInfo=req.user.email;
   const id=req.params.id
   const {phone,email,address,pan,aadhar}=req.body;
@@ -366,7 +368,7 @@ app.post("/customers/update/:id",authenticateRoutes,(req,res)=>{
   })
 })
 
-app.post("/customers_del/:id",authenticateRoutes,(req,res)=>{
+app.post("/customers_del/:id",(req,res)=>{
   const query="Delete  from customers where id=?"
   db.query(query,[req.params.id],(err,result)=>{
     if(err){console.log("Unable to delete customers",err)
@@ -390,7 +392,7 @@ app.get("/view/customer/:cust_id",(req,res)=>{
 //PURCHASE REQUEST DETAILS TO BE ADDED.
 
 
-app.get("/purchase_query",authenticateRoutes,(req,res)=>{
+app.get("/purchase_query",(req,res)=>{
   
   const query1="Select * from customers";
   const query2="select * from users";
@@ -418,7 +420,7 @@ app.get("/purchase_query",authenticateRoutes,(req,res)=>{
 
 
 
-app.post("/purchase_query",authenticateRoutes,(req,res)=>{
+app.post("/purchase_query",(req,res)=>{
   const userInfo=req.user.email;
 const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,queryclose_date}=req.body;
   const query="Insert into purchase_query(customer_name,work_type,sub_work,remarks,query_date,assigned_to,query_sts,queryclose_date,updated_by,last_updated)values(?,?,?,?,?,?,?,?,?,Now())"
@@ -430,7 +432,7 @@ const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,quer
     res.redirect("/purchase_dashboard")
   })})
 
-  app.get("/purchase_dashboard",authenticateRoutes,(req,res)=>{
+  app.get("/purchase_dashboard",(req,res)=>{
     const query="Select * from purchase_query"
     db.query(query,(err,pquery)=>{
       if(err){
@@ -451,7 +453,7 @@ const {customername,worktype,subwork,remarks,querydate,assignedto,query_sts,quer
       })
     
     })
-  app.post("/purchase_query/update/:query_id",authenticateRoutes,(req,res)=>{
+  app.post("/purchase_query/update/:query_id",(req,res)=>{
     const userInfo=req.user.email
       const id=req.params.query_id;
       const{query_sts,remarks}=req.body
@@ -488,7 +490,7 @@ res.render("purchase_view",{result})
 
 
 //Add License Type details
-app.get("/add_license",authenticateRoutes,(req,res)=>{
+app.get("/add_license",(req,res)=>{
   res.render("add_license")
 })
 app.post("/license",(req,res)=>{
@@ -504,7 +506,7 @@ app.post("/license",(req,res)=>{
 })
 
 
-app.get("/applicationtype_dashboard",authenticateRoutes,(req,res)=>{
+app.get("/applicationtype_dashboard",(req,res)=>{
   const query="select * from license_type"
   db.query(query,(err,form)=>{
     if(err){console.log(err)
@@ -547,7 +549,7 @@ app.get("/add_quotation",(req,res)=>{
 })
 
 
-app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
+app.post("/submit_quotation",(req,res)=>{
   let userInfo=req.user.email
   const {customerName,gst,quotation_sts,quotationNo,totalTax,totalDiscamt,totalQty,grandTotal,paymentTerms,termsConditions,govtfee,constfee,remarks}=req.body
  
@@ -557,7 +559,7 @@ app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
     
-    db.query(query,[customerName,gst,quotationNo,totalQty,totalTax,totalDiscamt,grandTotal,quotation_sts,,userInfo,govtfee,constfee],(err,result)=>{
+    db.query(query,[customerName,gst,quotationNo,totalQty,totalTax,totalDiscamt,grandTotal,quotation_sts,userInfo,govtfee,constfee],(err,result)=>{
       if(err){
         console.log("error inserting quotation details",err)
       }
@@ -592,7 +594,7 @@ app.post("/submit_quotation",authenticateRoutes,(req,res)=>{
 
 
 
-app.get("/quotation_dashboard",authenticateRoutes,(req,res)=>{
+app.get("/quotation_dashboard",(req,res)=>{
   const query="select * from quotation";
   db.query(query,(err,quotations)=>{
     if(err){console.log(err)}
