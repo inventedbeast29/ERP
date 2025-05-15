@@ -125,7 +125,8 @@
     Swal.fire({
   title: "Mail Sent Successfully",
   icon: "success",
-  draggable: true
+}).then(()=>{
+     window.location.href = "/remnder"; // or any other page
 });
   }
   else{

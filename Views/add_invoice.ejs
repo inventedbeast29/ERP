@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Sales Invoice</title>
+  <!-- ✅ Bootstrap 5.3 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="p-4 bg-light">
+
+<div class="container bg-white p-4 shadow rounded">
+  <h2 class="mb-4 text-center">Create Sales Invoice</h2>
+  <form action="/sales-invoices" method="POST">
+
+    <!-- Invoice Header -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="invoice_number" class="form-label">Invoice Number</label>
+        <% const date=new Date().toLocaleString('en-GB') %>
+        <% ans=date.split(",") %>
+        <%const splithr=ans[1].split(":")%>
+         
+        <input type="text" id="invoice_number" name="invoice_number" class="form-control" required  value="<%= `SI`.concat(Math.floor(Math.random()*100000)).concat(splithr[2])%>" readonly>
+      </div>
+      <div class="col-md-4">
+        <label for="invoice_date" class="form-label">Invoice Date</label>
+        <input type="date" id="invoice_date" name="invoice_date" class="form-control" value="<%= new Date().toISOString().split('T')[0] %>" required>
+      </div>
+      <div class="col-md-4">
+        <label for="quotation_id" class="form-label">Quotation No.</label>
+         <input type="text" id="quotation_id" name="quotation_id" class="form-control" disabled value="<%= queryres.quotation_no %>">
+             </div>          
+    </div>
+
+    <!-- Customer Info -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="customer_id" class="form-label">Customer Name</label>
+        <input type="text" name="customer_id" class="form-control" required disabled value="<%=queryres.cust_name%>">
+      </div>
+      <div class="col-md-4">
+        <label for="customer_phone" class="form-label">Customer Contact</label>
+        <input type="text" name="customer_phone" class="form-control" disabled value="<%= result2.phone %>">
+      </div>
+
+      <div class="col-md-4">
+         <label for="customer_address" class="form-label">Customer Address</label>
+         <textarea name="customer_address" class="form-control" disabled><%=result2.address%></textarea>
+      </div>
+      
+    </div>
+    <hr>
+    <!-- Item List -->
+    <h5 class="mt-4">Item List</h5>
+    <table class="table table-bordered text-center mb-3">
+      <thead class="table-light">
+        <tr>
+          <th>S.No</th>
+          <th>Item Description</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Discount</th>
+          <th>Tax</th>
+          <th>Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+          <% items.forEach(function(items,index){ %>
+            <tr>
+             <td><%=index+1%></td>
+          <td><%= items.item_desc %></td>
+          <td><%= items.quantity %></td>
+          <td><%= items.unit_price %></td>
+          <td><%=items.discount_amt %></td>
+          <td><%=items.tax_amt%></td>
+          <td><%=items.total_amt%></td>
+        </tr>
+          <%}) %>
+         
+      </tbody>
+    </table>
+    <hr>
+    <!-- Financial Summary -->
+       <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="govtfee" class="form-label" >Goverment Fees</label>
+              <input type="number" class="form-control" name="govtfee" id="govtfee" value="<%=queryres.govtfee%>" disabled> 
+            </div>
+            <div class="col-md-6">
+              <label for="constfee" class="form-label" >Consultation Fees</label>
+              <input type="number" class="form-control" name="constfee" id="constfee" disabled value="<%= queryres.const_fee %>"> 
+          </div>
+          </div>
+          <hr>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="discount_total" class="form-label">Discount</label>
+        <input type="number" id="discount_total" name="discount_total" class="form-control" disabled required value="<%=queryres.total_disc%>">
+      </div>
+      <div class="col-md-4">
+        <label for="tax_total" class="form-label">Tax</label>
+        <input type="number" id="tax_total" name="tax_total" class="form-control" disabled required value="<%= queryres.totalTax %>">
+      </div>
+      <div class="col-md-4">
+        <label for="total_amount" class="form-label">Grand Total</label>
+        <input type="number" id="total_amount" name="total_amount" class="form-control" disabled required value="<%= queryres.total_amt %>">
+      </div>
+    </div>
+
+    <!-- Notes & Terms -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="remarks" class="form-label">Remarks / Notes</label>
+        <textarea id="remarks" name="remarks" class="form-control" rows="3"><%=items[0].notes%></textarea>
+      </div>
+      <div class="col-md-4">
+        <label for="payment_terms" class="form-label">Payment Terms</label>
+        <input type="text" class="form-control" name="payment_terms"  value="<%=items[0].payment_term %>">
+      </div>
+      <div class="col-md-4">
+        <label for="terms_condition" class="form-label">Terms Condition</label>
+        <input type="text" class="form-control" name="terms_condition" value="<%= items[0].terms_condition %>">
+      </div>
+    </div>
+    <hr>
+    <!-- Submit -->
+    <div class="row mb-3">
+      <button type="submit" class="btn btn-primary">Submit Invoice</button>
+    </div>
+
+  </form>
+</div>
+
+</body>
+</html>

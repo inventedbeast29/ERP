@@ -49,6 +49,18 @@
    #quotationtable thead tr th{
         text-align:   center !important;
     }
+    .so-text{
+        display: none;
+        right: 0;
+       
+    }
+    .so:hover .so-text{
+       display:block;
+       position: absolute;
+       right: 5px;
+       background-color: whitesmoke;
+            color:rgb(11, 7, 250);
+    }
     </style>
 </head>
 <body>
@@ -111,6 +123,13 @@
                                 <a href="/view-quotation/<%= quotation.id %>?qno=<%=quotation.quotation_no %>" class="btn btn-primary btn-sm mb-1">
                                     <i class="bi bi-eye-fill"></i>
                                   </a>
+                                  <% if(quotation.quotation_sts=="Accepted"){ %>
+                                        <a href="/add_sales_invoice/<%=quotation.quotation_no%>?customer_name=<%=quotation.cust_name%>" class="btn btn-success btn-sm me-2 so">
+                                          <i class="bi bi-arrow-right-square"></i> <span class="so-text">Convert To Sales Invoice</span> 
+                                            </a>
+                                         
+                                            
+                                <%  } %>
                                  <% if(quotation.quotation_sts!=="Accepted"  && quotation.quotation_sts !== "Rejected"){ %>
                                 <a href="/edit-quotation/<%= quotation.id%>?qno=<%=quotation.quotation_no%>" class="btn btn-warning btn-sm mb-1">
                                     <i class="bi bi-pencil-fill"></i>

@@ -14,6 +14,7 @@ app.use(cookieparser());
 const authenticateRoute=require("./authenticateRoutes")
 const methodoverride=require('method-override');
 const { default: Swal } = require('sweetalert2');
+const roleCheck=require("./RBAC")
 const { disconnect, prependListener } = require('process');
 
 
@@ -161,6 +162,7 @@ app.post("/login",(req, res) => {
       });
 
       // Render the main page
+
       res.render("main"); // you can pass user data to your template if needed
         });
       }
@@ -200,7 +202,7 @@ app.get("/api/employee",(req, res) => {
   
 
 
-app.get("/employee",(req, res) => {
+app.get("/employee",roleCheck("HR"),(req, res) => {
   res.render("employee"); // No users passed — table will be filled by JS
 });
 
@@ -554,7 +556,7 @@ app.post("/submit_quotation",(req,res)=>{
   const {customerName,gst,quotation_sts,quotationNo,totalTax,totalDiscamt,totalQty,grandTotal,paymentTerms,termsConditions,govtfee,constfee,remarks}=req.body
  
  //console.log(customerName,quotationDate,quotationNo,totalQty,grandTotal,"Paymentterm",paymentTerms,"termsConditions",termsConditions,"remark",remarks);
-    const query="Insert into quotation (cust_name,gst,qtn_date,quotation_no,total_qty,totalTax,total_disc,total_amt,quotation_sts,acc_rej_date,updated_by,govtfee,const_fee)values(?,?,Now(),?,?,?,?,?,?,?,?,?,?) "
+    const query="Insert into quotation (cust_name,gst,qtn_date,quotation_no,total_qty,totalTax,total_disc,total_amt,quotation_sts,updated_by,govtfee,const_fee)values(?,?,Now(),?,?,?,?,?,?,?,?,?) "
     const query2 = "INSERT INTO quotation_items (quotation_no, item_desc, quantity, unit_price, discount_amt, tax_amt, total_amt,payment_term,term_condition,notes) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?)";
    const   {item_desc,quantity,unitPrice,discount,tax,amount}=req.body
   // console.log(item_desc,quantity,unitPrice,discount,tax,amount)
@@ -682,6 +684,31 @@ app.post("/delete-quotation/:id",(req,res)=>{
       res.redirect("/quotation_dashboard")
   })
 })
+
+
+app.get("/sales_dashboard",(req,res)=>{
+       res.render("sales_dashboard")
+   })
+
+  app.get("/add_sales_invoice/:qno",(req,res)=>{
+    const qtn=req.params.qno;
+    const customer=req.query.customer_name;
+    const query="select * from quotation where quotation_no=?";
+    const query2="select * from customers where name=?"
+    const query3="Select * from quotation_items where quotation_no=?"
+    db.query(query,[qtn],(err,result)=>{
+      if(err){console.log(err)}
+      const queryres=result[0]
+     db.query(query2,[customer],(err,cust)=>{
+      if(err){console.log(err)}
+      const result2=cust[0];
+      db.query(query3,[qtn],(err,items)=>{
+        if(err){console.log(err)}
+        res.render("add_invoice",{queryres,result2,items})
+      })    
+     })  
+    })
+  })
 
 app.get("/reminders",(req,res)=>{
   const query="Select * from customers";
